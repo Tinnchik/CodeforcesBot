@@ -6,6 +6,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
+from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from yandexgptlite import YandexGPTLite
 
 from codeforcerequest import request_find_problem
@@ -24,6 +25,9 @@ cf_tags = ["2-sat", "binary search", "bitmasks", "brute force", "chinese remaind
 
 logger = logging.getLogger(__name__)
 
+reply_keyboard = [[KeyboardButton(text='/task'), KeyboardButton(text='/stop')]]
+kb = ReplyKeyboardMarkup(keyboard=reply_keyboard, resize_keyboard=True, one_time_keyboard=False)
+
 
 class Form(StatesGroup):
     tags = State()
@@ -33,17 +37,17 @@ class Form(StatesGroup):
 @form_router.message(CommandStart())
 async def command_start(message: Message, state: FSMContext):
     await state.set_state(Form.tags)
-    await message.answer(
+    await message.reply(
         "Привет, я бот, который поможет вам выбрать задачу для решения!\n"
         "Напишите, задачи каких типов вас интересуют. "
-        "Вы можете остановить работу, послав команду /stop.",
+        "Вы можете остановить работу, послав команду /stop.", reply_markup=kb
     )
 
 
 @form_router.message(Command("task"))
 async def command_task(message: Message, state: FSMContext):
     await state.set_state(Form.tags)
-    await message.answer(
+    await message.reply(
         "Напишите, задачи каких типов вас интересуют."
     )
 
@@ -57,8 +61,8 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
 
     logging.info("Остановились на шаге %r", current_state)
     await state.clear()
-    await message.answer(
-        "Всего доброго!",
+    await message.reply(
+        "Всего доброго!", reply_markup=ReplyKeyboardRemove()
     )
 
 
@@ -80,13 +84,12 @@ async def process_hard_lvl(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
     req = message.text
-    print("fsfs")
     hard_lvl = account.create_completion(
-        f'"{req}"По этому запросу выбери сложность от 800 до 3500, где 800 - легкая, а 3500 - невероятно сложная.'
+        f'"{req}"По этому запросу выбери сложность от 800 до 3500, где 800 - легкая, а 3500 - невероятно сложная. Если пользователь вводит число, то результат - это же самое число'
         f'В качестве ответа отправь только число.',
         '0')
     logger.info(f"сложность {hard_lvl}")
-    print("fsfs")
+    print(hard_lvl)
     answer = f'''Тогда вам подойдет эти задачи:\n {request_find_problem(';'.join(data['tags']), hard_lvl)}'''
     await message.answer(answer)
 
