@@ -85,11 +85,13 @@ async def process_hard_lvl(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
     req = message.text
+    print("fsfs")
     hard_lvl = account.create_completion(
         f'"{req}"По этому запросу выбери сложность от 800 до 3500, где 800 - легкая, а 3500 - невероятно сложная.'
         f'В качестве ответа отправь только число.',
-        '0.5')
+        '0')
     logger.info(f"сложность {hard_lvl}")
+    print("fsfs")
     answer = f'''Тогда вам подойдет эти задачи:\n {request_find_problem(';'.join(data['tags']), hard_lvl)}'''
     await message.answer(answer)
 
