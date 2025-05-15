@@ -1,16 +1,11 @@
 import asyncio
 import logging
-from os import environ
 
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-import pygame
 import aiogram
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
-from pygame.examples.video import answer
 from yandexgptlite import YandexGPTLite
 
 from codeforcerequest import request_find_problem
