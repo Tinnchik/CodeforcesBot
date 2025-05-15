@@ -7,10 +7,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
 from yandexgptlite import YandexGPTLite
+from tokens import BOT_TOKEN
 
 form_router = Router()
 dp = Dispatcher()
-BOT_TOKEN = "7891329286:AAGHiWkeaR0xZkwUdkIytk1feOnrodJscjk"
 account = YandexGPTLite('b1gvp4l65bsipa1tnks5', 'y0__xCXvfP0AxjB3RMgm-2BjRNWOhJNqnlFJ0vKqYH-yiYZdKtvqw')
 cf_tags = ["2-sat", "binary search", "bitmasks", "brute force", "chinese remainder theorem", "combinatorics",
            "constructive algorithms", "data structures", "dfs and similar", "divide and conquer", "dp",
