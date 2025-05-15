@@ -1,15 +1,11 @@
 import json
-from os import environ
-
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-
-import pygame
+from random import choice
 
 import requests
 
 
 def request_find_problem(tags, rating):
-    return rating
+    print(tags, rating)
     url = f"https://codeforces.com/api/problemset.problems?tags={tags[:tags.find(';')]}"
     response = requests.get(url).json()
     print(response['result'])
@@ -18,7 +14,6 @@ def request_find_problem(tags, rating):
     if response['status'] == 'OK':
         s = []
         for el in response['result']['problems']:
-            if 'rating' in el and el['rating'] == rating:
+            if 'rating' in el and el['rating'] == int(rating):
                 s.append(el)
-                break
-    return f'''https://codeforces.com/problemset/problem/{s[-1]['contestId']}/{s[-1]['index']}'''
+    return f'''https://codeforces.com/problemset/problem/{choice(s)['contestId']}/{s[-1]['index']}'''
