@@ -1,4 +1,15 @@
-import requests
+import json
 
-url = "https://codeforces.com/api/user.info?handles=Tinnchik"
-response = requests.get(url)
+import requests
+def request_find_problem(tags, rating):
+    url = f"https://codeforces.com/api/problemset.problems?tags={tags}"
+    response = requests.get(url).json()
+    with open('request.json', 'w') as outfile:
+        json.dump(response, outfile)
+    if response['status'] == 'OK':
+        s = []
+        for el in response['result']['problems']:
+            if el['rating'] == rating:
+                s.append(el)
+                break
+    return f'https://codeforces.com/problemset/problem/{el['contestId']}/{el['index']}'
