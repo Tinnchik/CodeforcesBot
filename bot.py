@@ -1,16 +1,23 @@
 import asyncio
 import logging
+from os import environ
 
-from aiogram import Bot, Dispatcher, Router, F
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
+import pygame
+import aiogram
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
+from pygame.examples.video import answer
 from yandexgptlite import YandexGPTLite
+
+from codeforcerequest import request_find_problem
 from tokens import BOT_TOKEN
 
-form_router = Router()
-dp = Dispatcher()
+form_router = aiogram.Router()
+dp = aiogram.Dispatcher()
 account = YandexGPTLite('b1gvp4l65bsipa1tnks5', 'y0__xCXvfP0AxjB3RMgm-2BjRNWOhJNqnlFJ0vKqYH-yiYZdKtvqw')
 cf_tags = ["2-sat", "binary search", "bitmasks", "brute force", "chinese remainder theorem", "combinatorics",
            "constructive algorithms", "data structures", "dfs and similar", "divide and conquer", "dp",
@@ -47,7 +54,7 @@ async def command_task(message: Message, state: FSMContext):
 
 
 @form_router.message(Command("stop"))
-@form_router.message(F.text.casefold() == "stop")
+@form_router.message(aiogram.F.text.casefold() == "stop")
 async def cancel_handler(message: Message, state: FSMContext) -> None:
     current_state = await state.get_state()
     if current_state is None:
@@ -83,11 +90,12 @@ async def process_hard_lvl(message: Message, state: FSMContext):
         f'В качестве ответа отправь только число.',
         '0.5')
     logger.info(f"сложность {hard_lvl}")
-    await message.answer(f"теги - {data['tags']}, сложность - {hard_lvl}")
+    answer = f'''Тогда вам подойдет эти задачи:\n {request_find_problem(';'.join(data['tags']), hard_lvl)}'''
+    await message.answer(answer)
 
 
 async def main():
-    bot = Bot(token=BOT_TOKEN)
+    bot = aiogram.Bot(token=BOT_TOKEN)
     dp.include_router(form_router)
     await dp.start_polling(bot)
 
