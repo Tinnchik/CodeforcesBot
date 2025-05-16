@@ -18,6 +18,7 @@ def request_find_problem(tags, rating):
                 s.append(el)
     return f'''https://codeforces.com/problemset/problem/{choice(s)['contestId']}/{s[-1]['index']}'''
 
+
 def my_profile_info(handle):
     url = f"https://codeforces.com/api/user.info?handles={handle}"
     response = requests.get(url).json()
@@ -28,6 +29,3 @@ def my_profile_info(handle):
         if key in profile:
             answer += f'{key}: {profile[key]}\n'
     return answer
-
-def near_contest():
-    url = 'https://codeforces.com/api/contest.list'
