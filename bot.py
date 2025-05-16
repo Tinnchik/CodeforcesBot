@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 import aiogram
@@ -9,7 +10,7 @@ from aiogram.types import Message
 from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from yandexgptlite import YandexGPTLite
 
-from codeforcerequest import request_find_problem
+from codeforcerequest import request_find_problem, my_profile_info
 from tokens import BOT_TOKEN
 
 form_router = aiogram.Router()
@@ -90,8 +91,30 @@ async def process_hard_lvl(message: Message, state: FSMContext):
         '0')
     logger.info(f"сложность {hard_lvl}")
     print(hard_lvl)
-    answer = f'''Тогда вам подойдет эти задачи:\n {request_find_problem(';'.join(data['tags']), hard_lvl)}'''
+    answer = f'''Тогда вам подойдет эти задачи:\n {request_find_problem(data['tags'], hard_lvl)}'''
     await message.answer(answer)
+
+
+@form_router.message(Command("profile"))
+async def my_profile(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    handle = None
+    with open('profiles.json', 'r', encoding='utf-8') as f:
+        if user_id in json.load(f):
+            handle = json.load(f)[user_id]
+    if handle is None:
+        await message.answer("Введите свой хэндл")
+        temp = message.text
+        while message.text == temp:
+            handle = message.text
+        handle = message.text
+        with open("profiles.json", 'r') as json_file:
+            d = json.load(json_file)
+            d[user_id] = handle
+        with open('profiles.json', 'w', encoding='utf-8') as f:
+            json.dump(d, f)
+    answ = my_profile_info(handle)
+    await message.answer(answ)
 
 
 async def main():
