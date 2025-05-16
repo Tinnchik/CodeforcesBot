@@ -28,3 +28,6 @@ def my_profile_info(handle):
         if key in profile:
             answer += f'{key}: {profile[key]}\n'
     return answer
+
+def near_contest():
+    url = 'https://codeforces.com/api/contest.list'

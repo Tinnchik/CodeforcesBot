@@ -37,6 +37,9 @@ class Form(StatesGroup):
 
 @form_router.message(CommandStart())
 async def command_start(message: Message, state: FSMContext):
+    '''
+    Команда старта бота
+    '''
     await state.set_state(Form.tags)
     await message.reply(
         "Привет, я бот, который поможет вам выбрать задачу для решения!\n"
@@ -47,6 +50,9 @@ async def command_start(message: Message, state: FSMContext):
 
 @form_router.message(Command("task"))
 async def command_task(message: Message, state: FSMContext):
+    '''
+    Команда для поиска задачи
+    '''
     await state.set_state(Form.tags)
     await message.reply(
         "Напишите, задачи каких типов вас интересуют."
@@ -56,6 +62,9 @@ async def command_task(message: Message, state: FSMContext):
 @form_router.message(Command("stop"))
 @form_router.message(aiogram.F.text.casefold() == "stop")
 async def cancel_handler(message: Message, state: FSMContext) -> None:
+    '''
+    Команда остановки бота
+    '''
     current_state = await state.get_state()
     if current_state is None:
         return
@@ -98,21 +107,10 @@ async def process_hard_lvl(message: Message, state: FSMContext):
 @form_router.message(Command("profile"))
 async def profile(message: Message, state: FSMContext):
     user_id = message.from_user.id
-    handle = None
+    handle = message.text.split()[1]
     with open('profiles.json', 'r', encoding='utf-8') as f:
         if user_id in json.load(f):
             handle = json.load(f)[user_id]
-    if handle is None:
-        await message.answer("Введите свой хэндл")
-        temp = message.text
-        while message.text == temp:
-            handle = message.text
-        handle = message.text
-        with open("profiles.json", 'r') as json_file:
-            d = json.load(json_file)
-            d[user_id] = handle
-        with open('profiles.json', 'w', encoding='utf-8') as f:
-            json.dump(d, f)
     answ = my_profile_info(handle)
     await message.answer(answ)
 
