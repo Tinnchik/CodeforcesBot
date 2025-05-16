@@ -96,7 +96,7 @@ async def process_hard_lvl(message: Message, state: FSMContext):
 
 
 @form_router.message(Command("profile"))
-async def my_profile(message: Message, state: FSMContext):
+async def profile(message: Message, state: FSMContext):
     user_id = message.from_user.id
     handle = None
     with open('profiles.json', 'r', encoding='utf-8') as f:
